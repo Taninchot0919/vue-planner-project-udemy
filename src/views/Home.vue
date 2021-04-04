@@ -2,17 +2,21 @@
   <div class="home">
     <div v-if="projects.length">
       <div v-for="project in projects" :key="project.id">
-        <single-project :project="project" @deleteProject="handleDelete"/>
+        <single-project
+          :project="project"
+          @deleteProject="handleDelete"
+          @updateProject="handleComplete"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import SingleProject from '../components/SingleProject.vue';
+import SingleProject from "../components/SingleProject.vue";
 export default {
   name: "Home",
-  components: {SingleProject},
+  components: { SingleProject },
   data() {
     return {
       projects: [],
@@ -26,13 +30,20 @@ export default {
   },
   methods: {
     // รับ id เข้ามาอัตโนมัติ จาก event deleteProject
-    handleDelete(id){
+    handleDelete(id) {
       // ถ้า id ที่รับเข้ามาไม่ตรงกับ project.id ให้เก็บไว้ (True) แต่ถ้าไม่ id ที่รับเข้ามาตรงกับ project.id ให้เอาออก (False)
       this.projects = this.projects.filter((project) => {
         // เนื่องด้วยบรรทัดข้างล่างนี้การจะเป็น true ได้ จะต้องมีค่า !=
-        return project.id !== id
-      })
-    }
+        return project.id !== id;
+      });
+    },
+    handleComplete(id) {
+      let p = this.projects.find((project) => {
+        return project.id === id;
+      });
+      p.complete = !p.complete;
+      // console.log(p)
+    },
   },
 };
 </script>

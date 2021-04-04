@@ -1,11 +1,14 @@
 <template>
-  <div class="project">
+  <!-- ถ้า project.complete เป็น True จะได้คลาสที่ชื่อว่า complete เพิ่มขึ้นมา -->
+  <div class="project" :class="{ complete: project.complete }">
     <div class="actions">
       <h3 @click="toggleDetails">{{ project.title }}</h3>
       <div class="icon">
         <span class="material-icons"> edit </span>
         <span class="material-icons" @click="deleteProject"> delete </span>
-        <span class="material-icons"> done </span>
+        <span class="material-icons" @click="toggleCompleteProject">
+          done
+        </span>
       </div>
     </div>
     <div v-if="showDetails">
@@ -28,10 +31,27 @@ export default {
       this.showDetails = !this.showDetails;
     },
     deleteProject() {
-        // พอ fetch ไปแล้ว JSON Server จะรู้ว่าต้องลบเอง
+      // พอ fetch ไปแล้ว JSON Server จะรู้ว่าต้องลบเอง
       fetch(this.uri, { method: "DELETE" })
-      .then(() => this.$emit('deleteProject', this.project.id))
-      .catch((err) => console.log(err.message))
+        .then(() => this.$emit("deleteProject", this.project.id))
+        .catch((err) => console.log(err.message));
+    },
+    toggleCompleteProject() {
+      fetch(this.uri, {
+        //*** Patch ใน JSON or REST API คือการอัพเดทแค่ field เดียวแบบ just field เดียว
+        method: "PATCH",
+        //*** เป็นการบอกว่าที่เราจะส่งไปเนี่ยเราจะส่ง json ไปนะ
+        headers: { "Content-Type": "application/json" },
+        //*** stringify เหมือนเป็น method เปลี่ยน object ให้เป็น json string ทำให้เราสามารถส่ง json ผ่าน server และ client ได้
+        body: JSON.stringify({ complete: !this.project.complete }),
+      })
+        // .then((result) => console.log(result))
+        .then(() => {
+          //   console.log("Can sent Emit");
+          //   console.log(this.project.complete);
+          this.$emit("updateProject", this.project.id);
+        })
+        .catch((err) => console.log(err.message));
     },
   },
 };
@@ -65,5 +85,9 @@ h3 {
   justify-content: space-between;
   /* คือการทำให้อยู่บรรทัดเดียวกัน ตรงกลางของ div นับจากแนวตั้ง */
   align-items: center;
+}
+/* พอ project.complte เป็น true แล้วก็ให้มาทำ class นี้ก็คือจะให้กรอบด้านซ้ายเป็นสีเขียว */
+.project.complete {
+  border-left: 4px solid #00ce89;
 }
 </style>
