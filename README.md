@@ -5,7 +5,7 @@
 npm install
 ```
 
-### install json-server
+### Install json-server
 ```
 npm install json-server
 ```
