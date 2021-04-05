@@ -4,9 +4,11 @@
     <div class="actions">
       <h3 @click="toggleDetails">{{ project.title }}</h3>
       <div class="icon">
-        <span class="material-icons"> edit </span>
+        <router-link :to="{ name: 'EditProject', params: { id: project.id } }">
+          <span class="material-icons"> edit </span>
+        </router-link>
         <span class="material-icons" @click="deleteProject"> delete </span>
-        <span class="material-icons" @click="toggleCompleteProject">
+        <span class="material-icons tick" @click="toggleCompleteProject">
           done
         </span>
       </div>
@@ -23,7 +25,7 @@ export default {
   data() {
     return {
       showDetails: false,
-      uri: "http://localhost:3000/projects/" + this.project.id,
+      uri: "http://localhost:3000/projects/" + this.project.id
     };
   },
   methods: {
@@ -34,7 +36,7 @@ export default {
       // พอ fetch ไปแล้ว JSON Server จะรู้ว่าต้องลบเอง
       fetch(this.uri, { method: "DELETE" })
         .then(() => this.$emit("deleteProject", this.project.id))
-        .catch((err) => console.log(err.message));
+        .catch(err => console.log(err.message));
     },
     toggleCompleteProject() {
       fetch(this.uri, {
@@ -43,7 +45,7 @@ export default {
         //*** เป็นการบอกว่าที่เราจะส่งไปเนี่ยเราจะส่ง json ไปนะ
         headers: { "Content-Type": "application/json" },
         //*** stringify เหมือนเป็น method เปลี่ยน object ให้เป็น json string ทำให้เราสามารถส่ง json ผ่าน server และ client ได้
-        body: JSON.stringify({ complete: !this.project.complete }),
+        body: JSON.stringify({ complete: !this.project.complete })
       })
         // .then((result) => console.log(result))
         .then(() => {
@@ -51,9 +53,9 @@ export default {
           //   console.log(this.project.complete);
           this.$emit("updateProject", this.project.id);
         })
-        .catch((err) => console.log(err.message));
-    },
-  },
+        .catch(err => console.log(err.message));
+    }
+  }
 };
 </script>
 
@@ -89,5 +91,8 @@ h3 {
 /* พอ project.complte เป็น true แล้วก็ให้มาทำ class นี้ก็คือจะให้กรอบด้านซ้ายเป็นสีเขียว */
 .project.complete {
   border-left: 4px solid #00ce89;
+}
+.project.complete .tick {
+  color: #00ce89;
 }
 </style>
