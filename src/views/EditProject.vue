@@ -24,6 +24,7 @@ export default {
         //   method สำหรับ patch put add delete ไม่มี s
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
+        // ต้องใส่เป็น row เลยว่าเราจะแก้ row ไหน
         body: JSON.stringify({ title: this.title, details: this.details })
       })
         .then(console.log("CAN RUN"))
